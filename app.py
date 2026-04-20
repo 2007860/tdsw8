@@ -5,10 +5,12 @@ import numpy as np
 
 app = FastAPI()
 
-# Train model at startup
 iris = load_iris()
-model = DecisionTreeClassifier(random_state=42)
+
+# FIX: limit depth to avoid overfitting
+model = DecisionTreeClassifier(max_depth=3, random_state=42)
 model.fit(iris.data, iris.target)
+
 class_names = ["setosa", "versicolor", "virginica"]
 
 @app.get("/health")
