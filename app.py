@@ -7,9 +7,12 @@ app = FastAPI()
 
 iris = load_iris()
 
-# FIX: limit depth to avoid overfitting
-model = DecisionTreeClassifier(max_depth=3, random_state=42)
-model.fit(iris.data, iris.target)
+# ✅ Use ONLY sepal features (first 2 columns)
+X = iris.data[:, :2]
+y = iris.target
+
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X, y)
 
 class_names = ["setosa", "versicolor", "virginica"]
 
@@ -19,6 +22,7 @@ async def health():
 
 @app.get("/predict")
 async def predict(sl: float, sw: float, pl: float, pw: float):
-    features = np.array([[sl, sw, pl, pw]])
+    # ✅ Only use sepal features for prediction
+    features = np.array([[sl, sw]])
     pred = int(model.predict(features)[0])
     return {"prediction": pred, "class_name": class_names[pred]}
